@@ -1,0 +1,6 @@
+com.ibm.ws.st.feature.jaxrs-2.0=prompt
+com.ibm.ws.st.feature.jdbc-4.1=prompt
+com.ibm.ws.st.feature.jpa-2.0=prompt
+com.ibm.ws.st.feature.jsf-2.2=prompt
+com.ibm.ws.st.feature.servlet-3.0=prompt
+eclipse.preferences.version=1

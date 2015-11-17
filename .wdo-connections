@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connections:connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:connections="http://www.ibm.com/websphere/wdo/connections">
+  <connection id="myConnToDb2Edutest8">
+    <development xsi:type="connections:rsc-live-connection" id="myConnToDb2Edutest8_dev" name="myConnToDb2Edutest8"/>
+    <runtime xsi:type="connections:datasource-connection" auto-deploy="true" class-location="D:\Program Files\IBM\SQLLIB\java\db2jcc.jar" id="myConnToDb2Edutest8_runtime" classname="com.ibm.db2.jcc.DB2ConnectionPoolDataSource" database-name="EDUTEST8" jndi-name="jdbc/myConnToDb2Edutest8" port-number="50000" resource-reference-name="myConnToDb2Edutest8" server-name="localhost" sql-vendor-type="55" userid="db2admin"/>
+  </connection>
+</connections:connections>

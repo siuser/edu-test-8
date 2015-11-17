@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evaluationRules>
+    <evaluationRules>
+        <marketRuleId>101</marketRuleId>
+        <ruleActivities>
+            <idRuleActivity>0</idRuleActivity>
+            <vehicleAttributeName>version</vehicleAttributeName>
+            <vehicleAttributeValue>gutte</vehicleAttributeValue>
+        </ruleActivities>
+        <ruleConditions>
+            <idRuleCondition>0</idRuleCondition>
+            <vehicleAttributeName>engineCode</vehicleAttributeName>
+            <vehicleAttributeValue>UTR39</vehicleAttributeValue>
+        </ruleConditions>
+    </evaluationRules>
+    <evaluationRules>
+        <marketRuleId>101</marketRuleId>
+    </evaluationRules>
+</evaluationRules>
