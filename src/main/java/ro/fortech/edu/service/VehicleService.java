@@ -380,6 +380,7 @@ public class VehicleService {
 		}
 
 		List<RuleActivity> activitiesList = evaluationRule.getRuleActivities();
+		System.out.println("activitiesList size"+activitiesList.size());
 		// Let's check if activitiesList contains any activity
 		if (!activitiesList.isEmpty()) {
 			// There are activities to be performed
