@@ -143,8 +143,9 @@ public class VehicleService {
 
 				// The message for EvaluationResultDetail
 				StringBuilder evaluationMessage = new StringBuilder();
-				evaluationMessage.append("EvaluationRule rule id= " + evaluationRule.getIdEvaluationRule()+LINE_SEPARATOR);
-				
+				evaluationMessage
+						.append("EvaluationRule rule id= " + evaluationRule.getIdEvaluationRule() + LINE_SEPARATOR);
+
 				// Get the marketRule corresponding to this rule
 				long marketRuleId = evaluationRule.getMarketRuleId();
 				MarketRule marketRule = marketRuleService.findMarketRuleById(marketRuleId);
@@ -161,13 +162,14 @@ public class VehicleService {
 						// This marketRule matches vehicle
 						// So we can apply evaluationRule
 						evaluationMessage.append("*****Market rule id= " + marketRule.getIdMarketRule()
-								+ " matches vehicle and is active"+LINE_SEPARATOR);						
+								+ " matches vehicle and is active" + LINE_SEPARATOR);
 						// Find conditions list
 						List<RuleCondition> conditionsList = evaluationRule.getRuleConditions();
-						//Let's check if conditionsList is empty
+						// Let's check if conditionsList is empty
 						if (conditionsList.isEmpty()) {
 							// conditionsList empty
-							evaluationMessage.append("*****NO conditions, this  evaluation rule will be applied"+LINE_SEPARATOR);							
+							evaluationMessage.append(
+									"*****NO conditions, this  evaluation rule will be applied" + LINE_SEPARATOR);
 						} else {
 							// conditionList not empty
 							if (isAllRuleConditionAccomplished(vehicle, conditionsList, evaluationMessage)) {
@@ -177,8 +179,9 @@ public class VehicleService {
 
 							} else {
 								// Not all conditions passed
-								evaluationMessage.append(
-										"*****NOT ALL conditions passed, this evaluation rule will NOT be applied"+LINE_SEPARATOR);								
+								evaluationMessage
+										.append("*****NOT ALL conditions passed, this evaluation rule will NOT be applied"
+												+ LINE_SEPARATOR);
 								evaluationResultDetail.setRuleStatus("NOK");
 								System.out.println("evaluationMessage= " + evaluationMessage);
 							}
@@ -187,9 +190,9 @@ public class VehicleService {
 						// Market rule does not matches vehicle OR market Rule
 						// inactive
 						evaluationMessage.append("*****Market rule id= " + marketRule.getIdMarketRule()
-								+ " does NOT matches vehicle or is NOT active"+LINE_SEPARATOR);						
+								+ " does NOT matches vehicle or is NOT active" + LINE_SEPARATOR);
 						evaluationMessage.append("*****Evaluation rule id= " + evaluationRule.getIdEvaluationRule()
-								+ " will NOT be applied"+LINE_SEPARATOR);						
+								+ " will NOT be applied" + LINE_SEPARATOR);
 						evaluationResultDetail.setRuleStatus("NOK");
 						System.out.println("evaluationMessage= " + evaluationMessage);
 					} // end else Market rule does not matches vehicle OR market
@@ -197,10 +200,11 @@ public class VehicleService {
 				} else {
 					// Database does NOT contain a MarketRule for this
 					// EvaluationRule
-					evaluationMessage.append("***** NO market rule  into the database for this Evaluation rule"+LINE_SEPARATOR);
+					evaluationMessage.append(
+							"***** NO market rule  into the database for this Evaluation rule" + LINE_SEPARATOR);
 					evaluationMessage.append(LINE_SEPARATOR);
 					evaluationMessage.append("*****Evaluation rule id= " + evaluationRule.getIdEvaluationRule()
-							+ " will NOT be applied"+LINE_SEPARATOR);					
+							+ " will NOT be applied" + LINE_SEPARATOR);
 					evaluationResultDetail.setRuleStatus("NOK");
 				}
 				evaluationResultDetail.setMessage(evaluationMessage.toString());
@@ -209,13 +213,14 @@ public class VehicleService {
 				// private List<EvaluationResultDetail> evaluationResultDetails
 				// = new ArrayList<>();
 				// ISO private List<EvaluationResultDetail>
-				// evaluationResultDetails;				
+				// evaluationResultDetails;
 				evaluationResult.getEvaluationResultDetails().add(evaluationResultDetail);
 				System.out.println("evaluationMessage= " + evaluationMessage);
 
 			} // end else There is an EvaluationRule in db
 		} // end for on rules
-		//Let's remove the last separator from allRuleIds and ruleIdsNotInDb
+			// Let's remove the last separator from allRuleIds and
+			// ruleIdsNotInDb
 		if (allRuleIds.length() > 0) {
 			allRuleIds.setLength(allRuleIds.length() - 1);
 		}
@@ -224,7 +229,7 @@ public class VehicleService {
 		}
 		evaluationResult.setEvaluationRulesApplied(allRuleIds.toString());
 		evaluationResult.setEvaluationRuleIdsNotInDatabase(ruleIdsNotInDb.toString());
-		// Update db	
+		// Update db
 		try {
 			this.update(vehicle);
 			evaluationResultService.register(evaluationResult);
@@ -351,9 +356,10 @@ public class VehicleService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Apply RuleActivity on a vehicle
+	 * 
 	 * @param vehicle
 	 * @param evaluationRule
 	 * @param evaluationResultDetail
@@ -374,46 +380,56 @@ public class VehicleService {
 		}
 
 		List<RuleActivity> activitiesList = evaluationRule.getRuleActivities();
-		String ruleActivityKey = null;
-		for (RuleActivity ruleActivity : activitiesList) {
-			ruleActivityKey = ruleActivity.getVehicleAttributeName();
-			if (vehicleFieldsMap.containsKey(ruleActivityKey)) {
-				// Activity attribute has a correspondent in
-				// vehicle fields
-				try {
-					this.setVehicleFieldValue(vehicle, ruleActivityKey, ruleActivity.getVehicleAttributeValue());
-					evaluationMessage
-							.append("*****Activity id= " + ruleActivity.getIdRuleActivity() + " applied result = OK");
-					evaluationMessage.append(LINE_SEPARATOR);
-					evaluationResultDetail.setRuleStatus("OK");
+		// Let's check if activitiesList contains any activity
+		if (!activitiesList.isEmpty()) {
+			// There are activities to be performed
+			System.out.println("activitiesList NOt empty");
+			String ruleActivityKey = null;
+			for (RuleActivity ruleActivity : activitiesList) {
+				ruleActivityKey = ruleActivity.getVehicleAttributeName();
+				if (vehicleFieldsMap.containsKey(ruleActivityKey)) {
+					// Activity attribute has a correspondent in
+					// vehicle fields
+					try {
+						this.setVehicleFieldValue(vehicle, ruleActivityKey, ruleActivity.getVehicleAttributeValue());
+						evaluationMessage.append(
+								"*****Activity id= " + ruleActivity.getIdRuleActivity() + " applied result = OK");
+						evaluationMessage.append(LINE_SEPARATOR);
+						evaluationResultDetail.setRuleStatus("OK");
+						System.out.println("evaluationMessage= " + evaluationMessage);
+
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} else {
+					// Activity attribute has NO correspondent
+					// in vehicle fields
+					evaluationMessage.append("*****Activity id=" + ruleActivity.getIdRuleActivity()
+							+ " activity vehicle attribute (" + ruleActivityKey
+							+ ") does not have a correspondent in vehicle fields" + LINE_SEPARATOR);
+					evaluationMessage.append(
+							"*****Activity id=" + ruleActivity.getIdRuleActivity() + " NOT applied" + LINE_SEPARATOR);
 					System.out.println("evaluationMessage= " + evaluationMessage);
-
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+			} // end for ruleActivities
 
-			} else {
-				// Activity attribute has NO correspondent
-				// in vehicle fields
-				evaluationMessage
-						.append("*****Activity id=" + ruleActivity.getIdRuleActivity() + " activity vehicle attribute ("
-								+ ruleActivityKey + ") does not have a correspondent in vehicle fields");
-				evaluationMessage.append(LINE_SEPARATOR);
-				evaluationMessage.append("*****Activity id=" + ruleActivity.getIdRuleActivity() + " NOT applied");
-				evaluationMessage.append(LINE_SEPARATOR);
-				System.out.println("evaluationMessage= " + evaluationMessage);
+		} else {
+			// activitiesList empty
+			System.out.println("activitiesList empty");
+			evaluationMessage.append("*****No Activity to be performed " + LINE_SEPARATOR);
 
-			}
-		} // end for ruleActivities
+		}
 
 	}
-	
+
 	/**
 	 * Check on a vehicle if all conditions from a list are passed
+	 * 
 	 * @param vehicle
 	 * @param conditionsList
 	 * @param evaluationMessage
@@ -433,7 +449,7 @@ public class VehicleService {
 		boolean isAllConditionAccomplished = true;
 		for (RuleCondition ruleCondition : conditionsList) {
 			Long conditionId = ruleCondition.getIdRuleCondition();
-			String ruleConditionKey = ruleCondition.getVehicleAttributeName();			
+			String ruleConditionKey = ruleCondition.getVehicleAttributeName();
 			if (vehicleFieldsMap.containsKey(ruleConditionKey)) {
 				// Condition vehicle attribute has a
 				// correspondent in vehicle fields
@@ -442,7 +458,7 @@ public class VehicleService {
 				evaluationMessage.append(LINE_SEPARATOR);
 				if ((ruleCondition.getVehicleAttributeValue() == null)
 						|| (ruleCondition.getVehicleAttributeValue().trim().length() == 0)) {
-					//Vehicle attribute is null or empty
+					// Vehicle attribute is null or empty
 					isAllConditionAccomplished = false;
 					evaluationMessage.append("*****Condition id=" + conditionId + " condition's vehicle value for "
 							+ "(" + ruleConditionKey + ")" + " is NOT set or null");
