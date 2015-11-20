@@ -12,14 +12,14 @@ import javax.xml.bind.annotation.XmlElement;
 public class EvaluationRules {
 	
 	@XmlElement
-    private List<EvaluationRule> evaluationRules= null;
+    private List<EvaluationRule> evaluationRule= null;
  
-    public List<EvaluationRule> getEvaluationRules() {
-        return evaluationRules;
+    public List<EvaluationRule> getEvaluationRule() {
+        return evaluationRule;
     }
  
-    public void setEvaluationRules(List<EvaluationRule> evaluationRules) {
-        this.evaluationRules = evaluationRules;
+    public void setEvaluationRule(List<EvaluationRule> evaluationRule) {
+        this.evaluationRule = evaluationRule;
     }
 
 }

@@ -68,6 +68,7 @@ public class EvaluationRuleRestServer {
         
     }
 	
+	
 	@POST
 	@Path("/evaluationRule")	
 	public Response postEvaluationRule(EvaluationRule evaluationRule){
@@ -76,11 +77,21 @@ public class EvaluationRuleRestServer {
 		 	}
 		try {
 			if(evaluationRule.getIdEvaluationRule()==null){
-				//New EvaluationRule
+				// New EvaluationRule 			
 				evaluationRuleService.register(evaluationRule);
 			}else{
-				//EvaluationRule already in db
-				evaluationRuleService.update(evaluationRule);
+				//EvaluationRule id not null
+				//Check if there is an EvaluationRule in db having this id
+				if(evaluationRuleService.findEvaluationRuleById(evaluationRule.getIdEvaluationRule())==null){
+					//No EvaluationRule in db having this id
+					// So it is a new EvaluationRule having id already set
+					evaluationRuleService.register(evaluationRule);
+				}else{
+					//There is an EvaluationRule in db having this id
+					//So let's update it
+					evaluationRuleService.update(evaluationRule);
+				}
+					
 			}
 			
 		} catch (Exception e) {
@@ -95,6 +106,36 @@ public class EvaluationRuleRestServer {
 		
 	}
 	
+	
+	/*
+	@POST
+	@Path("/evaluationRule")	
+	public Response postEvaluationRule(EvaluationRule evaluationRule){
+		if ( evaluationRule == null){
+			throw new WebApplicationException(Response.Status.NOT_FOUND);		
+		 	}
+		try {
+			if(evaluationRule.getIdEvaluationRule()==null){
+				//New EvaluationRule
+				evaluationRuleService.register(evaluationRule);
+			}else{
+				//EvaluationRule id not null
+				//So let's merge 				
+				evaluationRuleService.update(evaluationRule);					
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+			return Response.status(400).entity(
+					"EvaluationRule create/update failed!").build();
+		}
+		
+		return Response.ok(evaluationRule).build();
+		
+	}
+	*/
 	
 	
 	

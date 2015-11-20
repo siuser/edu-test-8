@@ -1,7 +1,6 @@
 package ro.fortech.edu.service;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +115,6 @@ public class VehicleService {
 	 */
 
 	public EvaluationResult evaluate(Vehicle vehicle, List<String> ruleIds) {
-
 		// A new Evaluation Result item every time an evaluate method call
 		// (every evaluation)
 		EvaluationResult evaluationResult = new EvaluationResult();
@@ -140,28 +138,13 @@ public class VehicleService {
 
 				// A new EvaluationResultDetail for every rule applied
 				EvaluationResultDetail evaluationResultDetail = new EvaluationResultDetail();
-
 				evaluationResultDetail.setEvaluationResult(evaluationResult);
 				evaluationResultDetail.setIdEvaluationRule(ruleIdLong);
 
 				// The message for EvaluationResultDetail
 				StringBuilder evaluationMessage = new StringBuilder();
-				evaluationMessage.append("EvaluationRule rule id= " + evaluationRule.getIdEvaluationRule());
-				evaluationMessage.append(LINE_SEPARATOR);
-
-				// The map of vehicle fields (field name as map key,field value
-				// as map value)
-				Map<String, String> vehicleFieldsMap = null;
-				try {
-					vehicleFieldsMap = this.getVehicleFiels(vehicle);
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				evaluationMessage.append("EvaluationRule rule id= " + evaluationRule.getIdEvaluationRule()+LINE_SEPARATOR);
+				
 				// Get the marketRule corresponding to this rule
 				long marketRuleId = evaluationRule.getMarketRuleId();
 				MarketRule marketRule = marketRuleService.findMarketRuleById(marketRuleId);
@@ -178,216 +161,61 @@ public class VehicleService {
 						// This marketRule matches vehicle
 						// So we can apply evaluationRule
 						evaluationMessage.append("*****Market rule id= " + marketRule.getIdMarketRule()
-								+ " matches vehicle and is active");
-						evaluationMessage.append(LINE_SEPARATOR);
+								+ " matches vehicle and is active"+LINE_SEPARATOR);						
 						// Find conditions list
 						List<RuleCondition> conditionsList = evaluationRule.getRuleConditions();
-						// Need to check if all conditions are met
-						boolean isConditionListApplicable = true;
-						for (RuleCondition ruleCondition : conditionsList) {
-							Long conditionId = ruleCondition.getIdRuleCondition();
-							String ruleConditionKey = ruleCondition.getVehicleAttributeName();
-							// System.out.println("ruleConditionKey= " +
-							// ruleConditionKey);
-							if (vehicleFieldsMap.containsKey(ruleConditionKey)) {
-								// Condition vehicle attribute has a
-								// correspondent in vehicle fields
-								evaluationMessage
-										.append("*****Condition id=" + conditionId + " condition's vehicle attribute "
-												+ "(" + ruleConditionKey + ")" + " is in vehicle fields");
-								evaluationMessage.append(LINE_SEPARATOR);
-
-								// System.out.println("ruleCondition.getVehicleAttributeValue().trimm().length="+ruleCondition.getVehicleAttributeValue().trim().length());
-
-								if ((ruleCondition.getVehicleAttributeValue() == null)
-										|| (ruleCondition.getVehicleAttributeValue().trim().length() == 0)) {
-									//
-									isConditionListApplicable = false;
-									evaluationMessage.append(
-											"*****Condition id=" + conditionId + " condition's vehicle value for " + "("
-													+ ruleConditionKey + ")" + " is NOT set or null");
-									evaluationMessage.append(LINE_SEPARATOR);
-									evaluationMessage.append("*****Condition id=" + ruleCondition.getIdRuleCondition()
-											+ "verified result = NOK");
-									evaluationMessage.append(LINE_SEPARATOR);
-									// Let's comment below break to see all
-									// conditions in action
-									// break;
-								} else {
-									// Vehicle attribute value not null
-									// We can check if vehicle attribute value
-									// equals
-									// condition attribute value
-
-									if (vehicleFieldsMap.get(ruleConditionKey)
-											.equals(ruleCondition.getVehicleAttributeValue())) {
-										// Rule condition attribute value equals
-										// vehicle attribute value
-										// So condition is met
-										evaluationMessage.append("*****Condition id="
-												+ ruleCondition.getIdRuleCondition() + " verified result = OK");
-										evaluationMessage.append(LINE_SEPARATOR);
-										// this.setVehicleFieldValue(vehicle,
-										// evaluationRule.getVehicleAttribute(),
-										// evaluationRule.getVehicleAttributeTarget());
-										System.out.println("evaluationMessage= " + evaluationMessage);
-
-									} else {
-										// Rule condition attribute value not
-										// equal vehicle attribute value
-										// Condition not met
-										// System.out.println("Rule condition
-										// attribute value not equal vehicle
-										// attribute value");
-										isConditionListApplicable = false;
-										evaluationMessage
-												.append("*****Condition id=" + ruleCondition.getIdRuleCondition()
-														+ " rule condition attribute value ("
-														+ ruleCondition.getVehicleAttributeValue()
-														+ ") not equal vehicle attribute value ("
-														+ vehicleFieldsMap.get(ruleConditionKey) + ")");
-										evaluationMessage.append(LINE_SEPARATOR);
-										evaluationMessage.append("*****Condition id="
-												+ ruleCondition.getIdRuleCondition() + " verified result = NOK");
-										evaluationMessage.append(LINE_SEPARATOR);
-										// Let's comment below break to see all
-										// conditions in action
-										// break;
-									}
-
-								} // end else attribute value not null
-
-							} else {
-								// Condition vehicle attribute has NO
-								// correspondent in
-								// vehicle fields
-								evaluationMessage
-										.append("*****Condition id=" + conditionId + " condition's vehicle attribute "
-												+ "(" + ruleConditionKey + ")" + " NOT in vehicle fields");
-								evaluationMessage.append(LINE_SEPARATOR);
-								evaluationMessage.append("*****Condition id=" + ruleCondition.getIdRuleCondition()
-										+ " verified result = NOK");
-								evaluationMessage.append(LINE_SEPARATOR);
-								isConditionListApplicable = false;
-								// Let's comment below break to see all
-								// conditions in action
-								// break;
-							}
-						} // end for conditionsList
-
-						// if (isConditionListApplicable &&
-						// (!conditionsList.isEmpty())) {
-						if (isConditionListApplicable) {
-							// All conditions passed
-							if (conditionsList.isEmpty()) {
-								// conditionsList empty
-								evaluationMessage.append("*****NO conditions, this  evaluation rule will be applied");
-								evaluationMessage.append(LINE_SEPARATOR);
-							} else {
-								// conditionsList not empty
-								evaluationMessage.append("*****All conditions applied result = OK");
-								evaluationMessage.append(LINE_SEPARATOR);
-								// System.out.println("evaluationMessage= " +
-								// evaluationMessage);
-							}
-
-							// So we can apply activities
-							List<RuleActivity> activitiesList = evaluationRule.getRuleActivities();
-							String ruleActivityKey = null;
-							for (RuleActivity ruleActivity : activitiesList) {
-								ruleActivityKey = ruleActivity.getVehicleAttributeName();
-								if (vehicleFieldsMap.containsKey(ruleActivityKey)) {
-									// Activity attribute has a correspondent in
-									// vehicle fields
-									try {
-										this.setVehicleFieldValue(vehicle, ruleActivityKey,
-												ruleActivity.getVehicleAttributeValue());
-										evaluationMessage.append("*****Activity id= " + ruleActivity.getIdRuleActivity()
-												+ " applied result = OK");
-										evaluationMessage.append(LINE_SEPARATOR);
-										evaluationResultDetail.setRuleStatus("OK");
-										System.out.println("evaluationMessage= " + evaluationMessage);
-
-									} catch (IllegalArgumentException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (IllegalAccessException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (NoSuchFieldException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (SecurityException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-
-								} else {
-									// Activity attribute has NO correspondent
-									// in vehicle fields
-									evaluationMessage.append("*****Activity id=" + ruleActivity.getIdRuleActivity()
-											+ " activity vehicle attribute (" + ruleActivityKey
-											+ ") does not have a correspondent in vehicle fields");
-									evaluationMessage.append(LINE_SEPARATOR);
-									evaluationMessage.append(
-											"*****Activity id=" + ruleActivity.getIdRuleActivity() + " NOT applied");
-									evaluationMessage.append(LINE_SEPARATOR);
-									System.out.println("evaluationMessage= " + evaluationMessage);
-
-								}
-							} // end for ruleActivities
+						//Let's check if conditionsList is empty
+						if (conditionsList.isEmpty()) {
+							// conditionsList empty
+							evaluationMessage.append("*****NO conditions, this  evaluation rule will be applied"+LINE_SEPARATOR);							
 						} else {
-							// Not all conditions passed
-							evaluationMessage
-									.append("*****NOT ALL conditions passed, this evaluation rule will NOT be applied");
-							evaluationMessage.append(LINE_SEPARATOR);
-							evaluationResultDetail.setRuleStatus("NOK");
-							System.out.println("evaluationMessage= " + evaluationMessage);
+							// conditionList not empty
+							if (isAllRuleConditionAccomplished(vehicle, conditionsList, evaluationMessage)) {
+								// All conditions passed
+								// So we can Apply Rule Activity
+								applyRuleActivity(vehicle, evaluationRule, evaluationResultDetail, evaluationMessage);
 
-						} // end else NOT all conditions passed
-
+							} else {
+								// Not all conditions passed
+								evaluationMessage.append(
+										"*****NOT ALL conditions passed, this evaluation rule will NOT be applied"+LINE_SEPARATOR);								
+								evaluationResultDetail.setRuleStatus("NOK");
+								System.out.println("evaluationMessage= " + evaluationMessage);
+							}
+						}
 					} else {
 						// Market rule does not matches vehicle OR market Rule
 						// inactive
 						evaluationMessage.append("*****Market rule id= " + marketRule.getIdMarketRule()
-								+ " does NOT matches vehicle or is NOT active");
-						evaluationMessage.append(LINE_SEPARATOR);
+								+ " does NOT matches vehicle or is NOT active"+LINE_SEPARATOR);						
 						evaluationMessage.append("*****Evaluation rule id= " + evaluationRule.getIdEvaluationRule()
-								+ " will NOT be applied");
-						evaluationMessage.append(LINE_SEPARATOR);
+								+ " will NOT be applied"+LINE_SEPARATOR);						
 						evaluationResultDetail.setRuleStatus("NOK");
 						System.out.println("evaluationMessage= " + evaluationMessage);
-
 					} // end else Market rule does not matches vehicle OR market
-						// Rule
-
+						// Rule inactive
 				} else {
 					// Database does NOT contain a MarketRule for this
 					// EvaluationRule
-					evaluationMessage.append("***** NO market rule  into the database for this Evaluation rule");
+					evaluationMessage.append("***** NO market rule  into the database for this Evaluation rule"+LINE_SEPARATOR);
 					evaluationMessage.append(LINE_SEPARATOR);
 					evaluationMessage.append("*****Evaluation rule id= " + evaluationRule.getIdEvaluationRule()
-							+ " will NOT be applied");
-					evaluationMessage.append(LINE_SEPARATOR);
+							+ " will NOT be applied"+LINE_SEPARATOR);					
 					evaluationResultDetail.setRuleStatus("NOK");
 				}
-
 				evaluationResultDetail.setMessage(evaluationMessage.toString());
 				System.out.println("evaluationResultDetail = " + evaluationResultDetail);
 				// Below null unless below change in EvaluationResult entity
 				// private List<EvaluationResultDetail> evaluationResultDetails
 				// = new ArrayList<>();
 				// ISO private List<EvaluationResultDetail>
-				// evaluationResultDetails;
-				System.out.println("evaluationResult.getEvaluationResultDetails() = "
-						+ evaluationResult.getEvaluationResultDetails());
-
+				// evaluationResultDetails;				
 				evaluationResult.getEvaluationResultDetails().add(evaluationResultDetail);
 				System.out.println("evaluationMessage= " + evaluationMessage);
 
 			} // end else There is an EvaluationRule in db
 		} // end for on rules
-
+		//Let's remove the last separator from allRuleIds and ruleIdsNotInDb
 		if (allRuleIds.length() > 0) {
 			allRuleIds.setLength(allRuleIds.length() - 1);
 		}
@@ -396,9 +224,7 @@ public class VehicleService {
 		}
 		evaluationResult.setEvaluationRulesApplied(allRuleIds.toString());
 		evaluationResult.setEvaluationRuleIdsNotInDatabase(ruleIdsNotInDb.toString());
-		System.out.println("allRuleIds = " + allRuleIds + " length = " + allRuleIds.length());
-		System.out.println("ruleIdsNotInDb = " + ruleIdsNotInDb + " length = " + ruleIdsNotInDb.length());
-
+		// Update db	
 		try {
 			this.update(vehicle);
 			evaluationResultService.register(evaluationResult);
@@ -406,7 +232,6 @@ public class VehicleService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return evaluationResult;
 	}
 
@@ -443,8 +268,7 @@ public class VehicleService {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public Map<String, String> getVehicleFiels(Vehicle vehicle)
-			throws IllegalArgumentException, IllegalAccessException {
+	public Map<String, String> getVehicleFiels(Vehicle vehicle) {
 		System.out.println("Enter method = getVehicleFiels(Vehicle vehicle)");
 		// Use java.reflect API to find vehicle's fields
 		Class<?> vehicleClass = vehicle.getClass();
@@ -461,7 +285,16 @@ public class VehicleService {
 			// which start with underscore; no interested
 			if (!field.getName().startsWith("_")) {
 				field.setAccessible(true);
-				Object objValue = field.get(vehicle);
+				Object objValue = null;
+				try {
+					objValue = field.get(vehicle);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 				// fieldType = field.getType().toString();
 				fieldName = field.getName();
@@ -493,14 +326,188 @@ public class VehicleService {
 	 * @throws NoSuchFieldException
 	 * @throws SecurityException
 	 */
-	public void setVehicleFieldValue(Vehicle vehicle, String fieldName, String fieldValue)
-			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+	public void setVehicleFieldValue(Vehicle vehicle, String fieldName, String fieldValue) {
 		System.out.println("Enter method = setVehicleFieldValue(Vehicle vehicle)");
 		// Use java.reflect API to set vehicle's fields
 		Class<?> vehicleClass = vehicle.getClass();
-		Field field = vehicleClass.getDeclaredField(fieldName);
+		Field field = null;
+		try {
+			field = vehicleClass.getDeclaredField(fieldName);
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		field.setAccessible(true);
-		field.set(vehicle, fieldValue);
+		try {
+			field.set(vehicle, fieldValue);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Apply RuleActivity on a vehicle
+	 * @param vehicle
+	 * @param evaluationRule
+	 * @param evaluationResultDetail
+	 * @param evaluationMessage
+	 */
+	public void applyRuleActivity(Vehicle vehicle, EvaluationRule evaluationRule,
+			EvaluationResultDetail evaluationResultDetail, StringBuilder evaluationMessage) {
+		// So we can apply activities
+
+		// The map of vehicle fields (field name as map key,field value
+		// as map value)
+		Map<String, String> vehicleFieldsMap = null;
+		try {
+			vehicleFieldsMap = this.getVehicleFiels(vehicle);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<RuleActivity> activitiesList = evaluationRule.getRuleActivities();
+		String ruleActivityKey = null;
+		for (RuleActivity ruleActivity : activitiesList) {
+			ruleActivityKey = ruleActivity.getVehicleAttributeName();
+			if (vehicleFieldsMap.containsKey(ruleActivityKey)) {
+				// Activity attribute has a correspondent in
+				// vehicle fields
+				try {
+					this.setVehicleFieldValue(vehicle, ruleActivityKey, ruleActivity.getVehicleAttributeValue());
+					evaluationMessage
+							.append("*****Activity id= " + ruleActivity.getIdRuleActivity() + " applied result = OK");
+					evaluationMessage.append(LINE_SEPARATOR);
+					evaluationResultDetail.setRuleStatus("OK");
+					System.out.println("evaluationMessage= " + evaluationMessage);
+
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else {
+				// Activity attribute has NO correspondent
+				// in vehicle fields
+				evaluationMessage
+						.append("*****Activity id=" + ruleActivity.getIdRuleActivity() + " activity vehicle attribute ("
+								+ ruleActivityKey + ") does not have a correspondent in vehicle fields");
+				evaluationMessage.append(LINE_SEPARATOR);
+				evaluationMessage.append("*****Activity id=" + ruleActivity.getIdRuleActivity() + " NOT applied");
+				evaluationMessage.append(LINE_SEPARATOR);
+				System.out.println("evaluationMessage= " + evaluationMessage);
+
+			}
+		} // end for ruleActivities
+
+	}
+	
+	/**
+	 * Check on a vehicle if all conditions from a list are passed
+	 * @param vehicle
+	 * @param conditionsList
+	 * @param evaluationMessage
+	 * @return
+	 */
+	public boolean isAllRuleConditionAccomplished(Vehicle vehicle, List<RuleCondition> conditionsList,
+			StringBuilder evaluationMessage) {
+		// The map of vehicle fields (field name as map key, field value
+		// as map value)
+		Map<String, String> vehicleFieldsMap = null;
+		try {
+			vehicleFieldsMap = this.getVehicleFiels(vehicle);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		boolean isAllConditionAccomplished = true;
+		for (RuleCondition ruleCondition : conditionsList) {
+			Long conditionId = ruleCondition.getIdRuleCondition();
+			String ruleConditionKey = ruleCondition.getVehicleAttributeName();			
+			if (vehicleFieldsMap.containsKey(ruleConditionKey)) {
+				// Condition vehicle attribute has a
+				// correspondent in vehicle fields
+				evaluationMessage.append("*****Condition id=" + conditionId + " condition's vehicle attribute " + "("
+						+ ruleConditionKey + ")" + " is in vehicle fields");
+				evaluationMessage.append(LINE_SEPARATOR);
+				if ((ruleCondition.getVehicleAttributeValue() == null)
+						|| (ruleCondition.getVehicleAttributeValue().trim().length() == 0)) {
+					//Vehicle attribute is null or empty
+					isAllConditionAccomplished = false;
+					evaluationMessage.append("*****Condition id=" + conditionId + " condition's vehicle value for "
+							+ "(" + ruleConditionKey + ")" + " is NOT set or null");
+					evaluationMessage.append(LINE_SEPARATOR);
+					evaluationMessage.append(
+							"*****Condition id=" + ruleCondition.getIdRuleCondition() + "verified result = NOK");
+					evaluationMessage.append(LINE_SEPARATOR);
+					// Let's comment below break to see all
+					// conditions in action
+					// break;
+				} else {
+					// Vehicle attribute value not null
+					// We can check if vehicle attribute value
+					// equals
+					// condition attribute value
+					if (vehicleFieldsMap.get(ruleConditionKey).equals(ruleCondition.getVehicleAttributeValue())) {
+						// Rule condition attribute value equals
+						// vehicle attribute value
+						// So condition is met
+						evaluationMessage.append(
+								"*****Condition id=" + ruleCondition.getIdRuleCondition() + " verified result = OK");
+						evaluationMessage.append(LINE_SEPARATOR);
+						// this.setVehicleFieldValue(vehicle,
+						// evaluationRule.getVehicleAttribute(),
+						// evaluationRule.getVehicleAttributeTarget());
+						System.out.println("evaluationMessage= " + evaluationMessage);
+					} else {
+						// Rule condition attribute value not
+						// equal vehicle attribute value
+						// Condition not met
+						// System.out.println("Rule condition
+						// attribute value not equal vehicle
+						// attribute value");
+						isAllConditionAccomplished = false;
+						evaluationMessage.append("*****Condition id=" + ruleCondition.getIdRuleCondition()
+								+ " rule condition attribute value (" + ruleCondition.getVehicleAttributeValue()
+								+ ") not equal vehicle attribute value (" + vehicleFieldsMap.get(ruleConditionKey)
+								+ ")");
+						evaluationMessage.append(LINE_SEPARATOR);
+						evaluationMessage.append(
+								"*****Condition id=" + ruleCondition.getIdRuleCondition() + " verified result = NOK");
+						evaluationMessage.append(LINE_SEPARATOR);
+						// Let's comment below break to see all
+						// conditions in action
+						// break;
+					}
+				} // end else attribute value not null
+			} else {
+				// Condition vehicle attribute has NO
+				// correspondent in
+				// vehicle fields
+				evaluationMessage.append("*****Condition id=" + conditionId + " condition's vehicle attribute " + "("
+						+ ruleConditionKey + ")" + " NOT in vehicle fields");
+				evaluationMessage.append(LINE_SEPARATOR);
+				evaluationMessage
+						.append("*****Condition id=" + ruleCondition.getIdRuleCondition() + " verified result = NOK");
+				evaluationMessage.append(LINE_SEPARATOR);
+				isAllConditionAccomplished = false;
+				// Let's comment below break to see all
+				// conditions in action
+				// break;
+			}
+		} // end for conditionsList
+
+		return isAllConditionAccomplished;
 	}
 
 }

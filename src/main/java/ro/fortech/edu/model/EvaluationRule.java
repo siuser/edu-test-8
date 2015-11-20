@@ -25,7 +25,8 @@ public class EvaluationRule implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_NR1")
+	@SequenceGenerator(name="SEQ_NR1",sequenceName="SEQ_NR1")
 	@Column(name="ID_EVALUATION_RULE")
 	private Long idEvaluationRule;
 

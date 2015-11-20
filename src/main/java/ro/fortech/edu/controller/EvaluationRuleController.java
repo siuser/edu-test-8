@@ -134,6 +134,7 @@ public class EvaluationRuleController {
 		EvaluationRules evaluationRules = new EvaluationRules();
 		
 		EvaluationRule evaluationRule1 = new EvaluationRule();	
+		evaluationRule1.setIdEvaluationRule(1000L);
 		RuleCondition ruleCondition1 = new RuleCondition();
 		ruleCondition1.setVehicleAttributeName("engineCode");
 		ruleCondition1.setVehicleAttributeValue("UTR39");
@@ -147,13 +148,11 @@ public class EvaluationRuleController {
 		EvaluationRule evaluationRule2 = new EvaluationRule();	
 		evaluationRule2.setMarketRuleId(101);
 		
-		
-		
 		List<EvaluationRule> evaluationRuleList = new ArrayList<>();
 		evaluationRuleList.add(evaluationRule1);
 		evaluationRuleList.add(evaluationRule2);
 		
-		evaluationRules.setEvaluationRules(evaluationRuleList);
+		evaluationRules.setEvaluationRule(evaluationRuleList);
 		
 		JAXBContext jaxbContext = JAXBContext.newInstance(EvaluationRules.class);
 	    Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -163,7 +162,7 @@ public class EvaluationRuleController {
 	    //Marshal the evaluationRules list in console
 	    jaxbMarshaller.marshal(evaluationRules, System.out);
 	     
-	    //Marshal the employees list in file
+	    //Marshal the employees list in xml file
 	    jaxbMarshaller.marshal(evaluationRules, new File("E:\\Workspaces\\Websphere-2\\edu-test-8\\docs\\evaluationRules.xml"));
 		
 	}
@@ -174,30 +173,17 @@ public class EvaluationRuleController {
 	     
 	    //We had written this file in marshalling example
 	    EvaluationRules evaluationRules = (EvaluationRules) jaxbUnmarshaller.unmarshal( new File("E:\\Workspaces\\Websphere-2\\edu-test-8\\docs\\evaluationRules.xml") );
-	    List<EvaluationRule> evaluationRuleList =evaluationRules.getEvaluationRules();
+	    List<EvaluationRule> evaluationRuleList =evaluationRules.getEvaluationRule();
 	    return evaluationRuleList;
 	}
 	
 	public void addBatchEvaluationRuleRest() throws JAXBException{		
 		System.out.println("Enter addBatchEvaluationRuleRest");
-		marshallingEvaluationRuleToXmlFile();
-		//Data should come from other sources
-		/*
-		List<EvaluationRule> evaluationRuleList = new ArrayList<>();
-		EvaluationRule evaluationRule1 = new EvaluationRule();	
-		evaluationRule1.setMarketRuleId(101);
-		evaluationRuleList.add(evaluationRule1);
-		
-		EvaluationRule evaluationRule2 = new EvaluationRule();	
-		evaluationRule2.setMarketRuleId(101);
-		evaluationRuleList.add(evaluationRule2);
-		*/
-		
+		//Create the xml file by marshaling some EvaluationRule
+		//marshallingEvaluationRuleToXmlFile();		
 		evaluationRuleRestClient.invokePostBatchEvaluationRule(unmarshallingEvaluationRuleFromXmlFile());;
 	}
 
-
-	
 
 	private String getRootErrorMessage(Exception e) {
 		// Default to general error message that registration failed.

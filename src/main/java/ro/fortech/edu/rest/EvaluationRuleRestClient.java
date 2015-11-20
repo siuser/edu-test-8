@@ -88,10 +88,11 @@ public class EvaluationRuleRestClient {
 	public void invokePostBatchEvaluationRule(List<EvaluationRule> evaluationRuleList) {
 		System.out.println("****Invoking the invokePostBatchEvaluationRule ****");
 		// Add an existing EvaluationRule in list
-		EvaluationRule evaluationRuleExistent = evaluationRuleService.findEvaluationRuleById(1L);
+		//EvaluationRule evaluationRuleExistent = evaluationRuleService.findEvaluationRuleById(1L);
 		// Make a change
-		evaluationRuleExistent.setDescription("Rule changed");
-		evaluationRuleList.add(evaluationRuleExistent);
+		//evaluationRuleExistent.setDescription("Rule changed");
+		//evaluationRuleList.add(evaluationRuleExistent);
+		
 		// Perform a POST on every evaluationRule from list
 		for (EvaluationRule evaluationRule : evaluationRuleList) {
 			this.invokePostEvaluationRule(evaluationRule);
