@@ -19,7 +19,7 @@ import ro.fortech.edu.service.VehicleService;
 @ManagedBean(name = "configurationController")
 public class ConfigurationController {
 
-	private static final String PROPERTIES_FILE_ABSOLUTE_PATH = "E:\\Workspaces\\Websphere-2\\edu-test-8\\docs\\ruleGroupConfig.properties";
+	private static final String PROPERTIES_FILE_ABSOLUTE_PATH = "E:\\Workspaces\\gits\\edu-test-8-git\\edu-test-8\\docs\\ruleGroupConfig.properties";
 	
 	FacesContext facesContext = FacesContext.getCurrentInstance();
 	

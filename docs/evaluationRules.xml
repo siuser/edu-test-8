@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evaluationRules>
     <evaluationRule>
-        <idEvaluationRule>99</idEvaluationRule>
+        <idEvaluationRule>1</idEvaluationRule>
         <marketRuleId>102</marketRuleId>
         <ruleActivities>
             <idRuleActivity>0</idRuleActivity>
@@ -16,5 +16,6 @@
     </evaluationRule>
     <evaluationRule>
         <marketRuleId>102</marketRuleId>
+        <description>Added with rule id=1</description>
     </evaluationRule>
 </evaluationRules>

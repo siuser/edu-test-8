@@ -87,7 +87,8 @@ public class EvaluationRuleService {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<EvaluationRule> criteriaQuery = criteriaBuilder.createQuery(EvaluationRule.class);
         Root<EvaluationRule> evaluationRule = criteriaQuery.from(EvaluationRule.class);           
-        criteriaQuery.select(evaluationRule);        
+        criteriaQuery.select(evaluationRule);   
+        criteriaQuery.orderBy(criteriaBuilder.asc((evaluationRule.get("idEvaluationRule"))));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
     

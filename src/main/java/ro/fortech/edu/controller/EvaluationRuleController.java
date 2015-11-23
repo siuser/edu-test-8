@@ -163,7 +163,7 @@ public class EvaluationRuleController {
 	    jaxbMarshaller.marshal(evaluationRules, System.out);
 	     
 	    //Marshal the employees list in xml file
-	    jaxbMarshaller.marshal(evaluationRules, new File("E:\\Workspaces\\Websphere-2\\edu-test-8\\docs\\evaluationRules.xml"));
+	    jaxbMarshaller.marshal(evaluationRules, new File("E:\\Workspaces\\gits\\edu-test-8-git\\edu-test-8\\docs\\evaluationRules.xml"));
 		
 	}
 	
@@ -172,7 +172,7 @@ public class EvaluationRuleController {
 	    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 	     
 	    //We had written this file in marshalling example
-	    EvaluationRules evaluationRules = (EvaluationRules) jaxbUnmarshaller.unmarshal( new File("E:\\Workspaces\\Websphere-2\\edu-test-8\\docs\\evaluationRules.xml") );
+	    EvaluationRules evaluationRules = (EvaluationRules) jaxbUnmarshaller.unmarshal( new File("E:\\Workspaces\\gits\\edu-test-8-git\\edu-test-8\\docs\\evaluationRules.xml") );
 	    List<EvaluationRule> evaluationRuleList =evaluationRules.getEvaluationRule();
 	    return evaluationRuleList;
 	}
